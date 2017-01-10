@@ -1,0 +1,9 @@
+FROM ubuntu
+MAINTAINER pi
+
+USER root
+
+RUN apt-get update -y
+RUN apt-get install -y default-jre default-jdk
+ADD https://goo.gl/Lyo36k selenium-server-standalone-3.0.1.jar
+ENTRYPOINT java -jar selenium-server-standalone-3.0.1.jar -role node  -hub http://seleniumhost:4444/grid/register && bash

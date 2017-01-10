@@ -1,0 +1,64 @@
+version: '2'
+services:
+
+ seleniumhost:
+  build:
+   context: .
+   dockerfile: DockerfileSel
+  tty: true
+  ports:
+   - 4444:4444
+
+ seleniumnode:
+  build:
+   context: .
+   dockerfile: DockerfileSelNode
+  depends_on: 
+   - seleniumhost
+  tty: true
+
+# zabbixagent:
+#  build: 
+#   context: .
+#   dockerfile: DockerfileZabbixAgent
+#  depends_on:
+#   - zabbixserver
+#  links:
+#   - zabbixserver
+#  tty: true
+#  ports:
+#   - 10050
+#
+# zabbixserver:
+#  build:
+#   context: .
+#   dockerfile: DockerfileZabbixServer
+#  ports: 
+#   - 8080:80
+#   - 10051
+#  tty: true
+
+ jenkins:
+  build:
+   context: .
+   dockerfile: DockerfileJenkins
+  ports:
+   - 8081:8080
+  tty: true
+ 
+# jira: 
+#  build:
+#   context: .
+#   dockerfile: DockerfileJira
+#  ports:
+#   - 8082:8080
+#  tty: true
+# 
+# nexus:
+#  build:
+#   context: .
+#   dockerfile: DockerfileNexus
+#  ports:
+#   - 8083:8081
+#  tty: true
+

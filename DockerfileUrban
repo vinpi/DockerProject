@@ -1,0 +1,17 @@
+FROM ubuntu:14.04
+MAINTAINER pi
+
+USER root
+
+RUN apt-get install -y default-jre default-jdk
+
+RUN echo "mysql mysql-server/root_password password root" | debconf-set-selections
+RUN echo "mysql mysql-server/root_password_again password root" | debconf-set-selections
+
+RUN service mysql start && echo "CREATE DATABASE uDeploy character set utf8 collate utf8_bin; GRANT ALL on uDeploy.* to uDeploy@localhost IDENTIFIED BY 'root';" | mysql -u root -proot
+
+RUN apt-get install -y mysql-server
+RUN apt-get install -y libmysql-java
+http://www-01.ibm.com/support/docview.wss?uid=swg24040300
+
+ENTRYPOINT

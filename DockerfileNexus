@@ -1,0 +1,15 @@
+FROM ubuntu
+MAINTAINER pi
+
+#setup
+USER root
+RUN apt-get update -y
+RUN apt-get install -y wget
+RUN apt-get install -y default-jre default-jdk
+WORKDIR /opt
+#download and allow access
+RUN wget http://download.sonatype.com/nexus/3/latest-unix.tar.gz
+RUN tar zxvf latest-unix.tar.gz
+
+#install
+ENTRYPOINT /opt/nexus-3.0.2-02/bin/nexus start && bash

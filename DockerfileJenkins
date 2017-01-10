@@ -1,0 +1,17 @@
+FROM ubuntu:14.04
+MAINTAINER pi
+
+#setup
+USER root
+RUN apt-get update -y
+RUN apt-get install -y wget git nano maven
+
+#download
+RUN wget -q -O - https://pkg.jenkins.io/debian/jenkins-ci.org.key | apt-key add -
+RUN sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+
+#install
+RUN apt-get update -y
+RUN apt-get install -y jenkins
+
+ENTRYPOINT service jenkins start && bash

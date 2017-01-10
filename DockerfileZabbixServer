@@ -1,0 +1,33 @@
+FROM ubuntu:14.04
+MAINTAINER pi
+
+USER root
+
+RUN apt-get update -y
+RUN apt-get install -y apache2 
+
+RUN echo "mysql mysql-server/root_password password root" | debconf-set-selections
+RUN echo "mysql mysql-server/root_password_again password root" | debconf-set-selections
+
+RUN apt-get install -y mysql-server
+RUN apt-get install -y wget php5 php5-cli php5-common php5-mysql
+RUN sed -i "879idate.timezone = 'Europe/London'" /etc/php5/apache2/php.ini
+
+RUN wget http://repo.zabbix.com/zabbix/3.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_3.0-1+trusty_all.deb
+RUN dpkg -i zabbix-release_3.0-1+trusty_all.deb
+RUN apt-get update -y
+
+RUN apt-get install -y zabbix-server-mysql zabbix-frontend-php zabbix-agent
+
+RUN service mysql start && echo "CREATE DATABASE zabbix character set utf8 collate utf8_bin; GRANT ALL on zabbix.* to zabbix@localhost IDENTIFIED BY 'root';" | mysql -u root -proot
+RUN service mysql start && zcat /usr/share/doc/zabbix-server-mysql/create.sql.gz | mysql -u root -proot zabbix
+
+RUN sed -i "115iDBPassword=root" /etc/zabbix/zabbix_server.conf
+RUN sed -i "89iDBName=zabbix" /etc/zabbix/zabbix_server.conf
+RUN sed -i "81iDBHost=localhost" /etc/zabbix/zabbix_server.conf
+RUN sed -i "12iListenPort=10051" /etc/zabbix/zabbix_server.conf
+
+RUN service apache2 restart
+RUN service zabbix-server restart
+
+ENTRYPOINT service mysql start && service apache2 start && service zabbix-server start && service zabbix-agent start && bash

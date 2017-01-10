@@ -1,0 +1,15 @@
+FROM ubuntu
+MAINTAINER Pi
+
+USER root
+WORKDIR /opt
+RUN apt-get update -y 
+RUN apt-get install -y default-jdk wget
+RUN java -version
+
+RUN wget https://www.atlassian.com/software/bamboo/downloads/binary/atlassian-bamboo-5.14.0.1.tar.gz
+RUN tar zxvf atlassian-bamboo-5.14.0.1.tar.gz
+RUN mkdir -p /home/vagrant/Desktop/bamboo-home
+RUN sed -i '1ibamboo.home= /home/vagrant/Desktop/bamboo-home\' /opt/atlassian-bamboo-5.14.0.1/atlassian-bamboo/WEB-INF/classes/bamboo-init.properties
+WORKDIR /opt/atlassian-bamboo-5.14.0.1
+ENTRYPOINT bin/start-bamboo.sh && bash
